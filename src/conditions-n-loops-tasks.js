@@ -556,8 +556,54 @@ function shuffleChar(str, iterations) {
  * 321321   => 322113
  *
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const numberToArray = (numToSplit) => {
+    let num = numToSplit;
+    const arr = [];
+    while (num > 0) {
+      arr.push(num % 10);
+      num = Math.floor(num / 10);
+    }
+    return arr.reverse();
+  };
+
+  const lettersArr = numberToArray(number);
+  let pivotIndex = -1;
+  let pivotValue = -1;
+  for (let i = lettersArr.length - 2; i >= 0; i -= 1) {
+    if (lettersArr[i] < lettersArr[i + 1]) {
+      pivotIndex = i;
+      pivotValue = lettersArr[i];
+      break;
+    }
+  }
+
+  if (pivotIndex === -1) {
+    return number;
+  }
+
+  let nearMinValue = 10;
+  let nearMinIndex = -1;
+  const lastPartArr = lettersArr.splice(
+    pivotIndex + 1,
+    lettersArr.length - pivotIndex
+  );
+
+  for (let i = 0; i < lastPartArr.length; i += 1) {
+    if (lastPartArr[i] < nearMinValue && lastPartArr[i] > pivotValue) {
+      nearMinIndex = i;
+      nearMinValue = lastPartArr[i];
+    }
+  }
+
+  if (nearMinIndex > -1) {
+    lettersArr[lettersArr.length - 1] = nearMinValue;
+    lastPartArr[nearMinIndex] = pivotValue;
+  }
+
+  lastPartArr.sort((a, b) => a - b);
+
+  return Number([...lettersArr, ...lastPartArr].join(''));
 }
 
 module.exports = {
